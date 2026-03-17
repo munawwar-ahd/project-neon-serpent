@@ -92,7 +92,6 @@ export default function SnakeGame() {
         toast({ title: "Link Copied!", description: "Share the fun!" });
       }
     } catch (err) {
-      // Gracefully handle permission denials or cancellations
       if (err instanceof Error && err.name !== 'AbortError') {
         await navigator.clipboard.writeText(window.location.href);
         toast({ title: "Link Copied!", description: "Share the fun!" });
@@ -245,9 +244,6 @@ export default function SnakeGame() {
 
       {/* Toolbar */}
       <div className="w-full max-w-[400px] flex justify-center gap-6 mt-8">
-        <Button variant="ghost" size="icon" onClick={togglePause} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
-          {gameState === 'PAUSED' ? <Play className="w-5 h-5" /> : <Pause className="w-5 h-5" />}
-        </Button>
         <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
           <Maximize className="w-5 h-5" />
         </Button>
@@ -255,11 +251,6 @@ export default function SnakeGame() {
           <Share2 className="w-5 h-5" />
         </Button>
       </div>
-
-      <footer className="mt-12 text-[10px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30 text-center">
-        <span>&copy; 2024 NEON SERPENT</span><br/>
-        <span className="mt-1 block">CRAFTED BY <span className="neon-text-red font-black">MUNAWWAR</span></span>
-      </footer>
     </div>
   );
 }
