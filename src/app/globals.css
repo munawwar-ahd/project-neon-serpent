@@ -59,39 +59,41 @@ canvas {
   touch-action: none;
 }
 
-/* Mobile Controls Styling */
+/* Redesigned Mobile Controls */
 .mobile-controls {
   position: fixed;
-  bottom: 40px;
+  bottom: 20px;
   left: 50%;
   transform: translateX(-50%);
   display: none;
   flex-direction: column;
   align-items: center;
-  gap: 15px;
+  gap: 10px;
   z-index: 100;
   pointer-events: auto;
+  padding: 10px;
 }
 
 .mobile-controls .middle-row {
   display: flex;
-  gap: 60px;
+  gap: 80px; /* Space between Left and Right buttons */
 }
 
 .mobile-controls button {
-  width: 70px;
-  height: 70px;
+  width: 75px;
+  height: 75px;
   border-radius: 9999px;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(17, 23, 24, 0.8);
+  backdrop-filter: blur(8px);
   border: 2px solid #FF3366;
   color: #FF3366;
-  font-size: 28px;
+  font-size: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.4);
   cursor: pointer;
-  transition: transform 0.1s, background 0.1s;
+  transition: transform 0.1s, background 0.2s, box-shadow 0.2s;
   touch-action: none;
   user-select: none;
   outline: none;
@@ -99,8 +101,9 @@ canvas {
 }
 
 .mobile-controls button:active {
-  transform: scale(0.92);
-  background: rgba(255, 51, 102, 0.3);
+  transform: scale(0.9);
+  background: rgba(255, 51, 102, 0.2);
+  box-shadow: 0 0 25px rgba(255, 51, 102, 0.8);
 }
 
 @media (max-width: 768px) {
