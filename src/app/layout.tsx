@@ -1,5 +1,6 @@
 import type {Metadata} from 'next';
 import './globals.css';
+import { Toaster } from "@/components/ui/toaster";
 
 export const metadata: Metadata = {
   title: 'Neon Serpent | Arcade Snake Game',
@@ -9,7 +10,7 @@ export const metadata: Metadata = {
 export default function RootLayout({
   children,
 }: Readonly<{
-  children: React.ReactNode;
+  children: React.ProjectFragment;
 }>) {
   return (
     <html lang="en" suppressHydrationWarning>
@@ -20,6 +21,7 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased overflow-hidden bg-background text-foreground" suppressHydrationWarning>
         {children}
+        <Toaster />
       </body>
     </html>
   );

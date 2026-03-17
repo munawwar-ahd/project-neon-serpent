@@ -6,9 +6,11 @@ import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SP
 import { sounds } from '@/lib/sounds';
 import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Maximize, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
 
 export default function SnakeGame() {
+  const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SnakeEngine>(new SnakeEngine());
   const [gameState, setGameState] = useState<GameState>('START');
@@ -67,19 +69,35 @@ export default function SnakeGame() {
   };
 
   const handleShare = async () => {
-    if (navigator.share) {
-      try {
-        await navigator.share({
-          title: 'Neon Serpent Arcade',
-          text: 'Check out this neon snake game!',
-          url: window.location.href,
-        });
-      } catch (err) {
-        console.error('Share failed:', err);
+    const shareData = {
+      title: 'Neon Serpent Arcade',
+      text: 'Can you beat my score in Neon Serpent?',
+      url: window.location.href,
+    };
+
+    try {
+      if (navigator.share && navigator.canShare && navigator.canShare(shareData)) {
+        await navigator.share(shareData);
+        return;
       }
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('Link copied to clipboard!');
+    } catch (err) {
+      // Ignore user cancellations, only handle actual errors
+      if ((err as Error).name === 'AbortError') return;
+    }
+
+    // Fallback: Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(window.location.href);
+      toast({
+        title: "Link Copied!",
+        description: "Game link copied to clipboard for sharing.",
+      });
+    } catch (clipboardErr) {
+      toast({
+        variant: "destructive",
+        title: "Share Failed",
+        description: "Could not share or copy the link.",
+      });
     }
   };
 
