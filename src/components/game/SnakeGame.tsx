@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SnakeEngine } from './SnakeEngine';
 import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SPEED } from './types';
 import { sounds } from '@/lib/sounds';
-import { Trophy, Play, Pause, RotateCcw, Maximize, Share2 } from 'lucide-react';
+import { Trophy, Play, RotateCcw, Maximize, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 
@@ -242,14 +242,22 @@ export default function SnakeGame() {
         )}
       </div>
 
-      {/* Toolbar */}
-      <div className="w-full max-w-[400px] flex justify-center gap-6 mt-8">
-        <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
-          <Maximize className="w-5 h-5" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
-          <Share2 className="w-5 h-5" />
-        </Button>
+      {/* Toolbar & Credits */}
+      <div className="w-full max-w-[400px] flex flex-col items-center gap-8 mt-8">
+        <div className="flex justify-center gap-6">
+          <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
+            <Maximize className="w-5 h-5" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full w-12 h-12 bg-white/5 border border-white/10 text-white/60 hover:text-white hover:bg-white/10">
+            <Share2 className="w-5 h-5" />
+          </Button>
+        </div>
+        
+        <div className="text-center opacity-80">
+          <p className="text-[10px] uppercase tracking-[0.5em] font-black neon-text-green">
+            Developed by <span className="text-white">Munawwar</span>
+          </p>
+        </div>
       </div>
     </div>
   );
