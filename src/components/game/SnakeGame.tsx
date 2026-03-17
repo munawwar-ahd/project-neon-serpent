@@ -207,7 +207,7 @@ export default function SnakeGame() {
               <h1 className="text-6xl font-black neon-text-red italic tracking-tighter">Hi!</h1>
             )}
             {introStep === 1 && (
-              <h1 className="text-4xl md:text-6xl font-black neon-text-green italic tracking-tighter">I&apos;m Munawwar Ahmed</h1>
+              <h1 className="text-4xl md:text-6xl font-black neon-text-green italic tracking-tighter">I&apos;m Munawwar</h1>
             )}
             {introStep === 2 && (
               <h1 className="text-5xl font-black neon-text-yellow italic tracking-tighter">Enjoy the game :)</h1>
