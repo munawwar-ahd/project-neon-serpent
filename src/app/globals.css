@@ -58,3 +58,53 @@
 canvas {
   touch-action: none;
 }
+
+/* Mobile Controls Styling */
+.mobile-controls {
+  position: fixed;
+  bottom: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: none;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  z-index: 100;
+  pointer-events: auto;
+}
+
+.mobile-controls .middle-row {
+  display: flex;
+  gap: 60px;
+}
+
+.mobile-controls button {
+  width: 70px;
+  height: 70px;
+  border-radius: 9999px;
+  background: rgba(0, 0, 0, 0.6);
+  border: 2px solid #FF3366;
+  color: #FF3366;
+  font-size: 28px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 15px rgba(255, 51, 102, 0.5);
+  cursor: pointer;
+  transition: transform 0.1s, background 0.1s;
+  touch-action: none;
+  user-select: none;
+  outline: none;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.mobile-controls button:active {
+  transform: scale(0.92);
+  background: rgba(255, 51, 102, 0.3);
+}
+
+@media (max-width: 768px) {
+  .mobile-controls {
+    display: flex;
+  }
+}
