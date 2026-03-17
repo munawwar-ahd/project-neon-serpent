@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SnakeEngine } from './SnakeEngine';
 import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SPEED, Direction } from './types';
 import { sounds } from '@/lib/sounds';
-import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight } from 'lucide-react';
+import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -58,11 +58,10 @@ export default function SnakeGame() {
     const engine = engineRef.current;
     const size = GRID_SIZE * CELL_SIZE;
 
-    // Clear background
     ctx.clearRect(0, 0, size, size);
 
     // Draw Subtle Grid
-    ctx.strokeStyle = '#33FF9922';
+    ctx.strokeStyle = 'rgba(51, 255, 153, 0.08)';
     ctx.lineWidth = 1;
     for (let i = 0; i <= GRID_SIZE; i++) {
       ctx.beginPath();
@@ -101,7 +100,6 @@ export default function SnakeGame() {
       const padding = 2;
       const r = isHead ? 6 : 4;
       
-      // Rounded rectangles for segments
       const x = segment.x * CELL_SIZE + padding;
       const y = segment.y * CELL_SIZE + padding;
       const w = CELL_SIZE - padding * 2;
@@ -149,107 +147,136 @@ export default function SnakeGame() {
   }, [gameLoop]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen p-4 select-none relative z-10">
+    <div className="flex flex-col items-center justify-center min-h-screen p-4 select-none relative z-10 overflow-hidden">
       {/* HUD */}
-      <div className="w-full max-w-[400px] flex justify-between items-center mb-6 px-2">
+      <div className="w-full max-w-[400px] flex justify-between items-center mb-4 px-4 bg-black/20 backdrop-blur-md rounded-2xl py-3 border border-white/5">
         <div className="flex flex-col">
-          <span className="text-xs uppercase tracking-widest text-muted-foreground font-semibold">Score</span>
-          <span className="text-3xl font-bold neon-text-red font-headline">{score}</span>
+          <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Score</span>
+          <span className="text-3xl font-black neon-text-red tabular-nums">{score}</span>
         </div>
         <div className="flex flex-col items-end">
-          <div className="flex items-center gap-1.5 text-xs uppercase tracking-widest text-muted-foreground font-semibold">
-            <Trophy className="w-3 h-3" />
+          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">
+            <Trophy className="w-3 h-3 text-secondary" />
             <span>Best</span>
           </div>
-          <span className="text-3xl font-bold neon-text-yellow font-headline">{highScore}</span>
+          <span className="text-3xl font-black neon-text-yellow tabular-nums">{highScore}</span>
         </div>
       </div>
 
-      {/* Game Canvas Container */}
-      <div className="relative p-1 rounded-xl bg-gradient-to-br from-primary/30 to-accent/20 border border-white/10 shadow-2xl">
-        <canvas
-          ref={canvasRef}
-          width={GRID_SIZE * CELL_SIZE}
-          height={GRID_SIZE * CELL_SIZE}
-          className="rounded-lg bg-black/40 backdrop-blur-sm"
-        />
+      {/* Game Canvas Area */}
+      <div className="relative group">
+        <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 rounded-[2rem] blur-2xl opacity-50" />
+        <div className="relative p-1.5 rounded-2xl bg-white/5 border border-white/10 shadow-2xl overflow-hidden">
+          <canvas
+            ref={canvasRef}
+            width={GRID_SIZE * CELL_SIZE}
+            height={GRID_SIZE * CELL_SIZE}
+            className="rounded-xl bg-black/60 backdrop-blur-xl"
+          />
 
-        {/* Overlays */}
-        {gameState === 'START' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/80 rounded-lg animate-in fade-in zoom-in duration-300">
-            <h1 className="text-5xl font-bold mb-2 neon-text-red italic tracking-tighter">NEON</h1>
-            <h1 className="text-5xl font-bold mb-8 neon-text-green italic tracking-tighter">SERPENT</h1>
-            <Button 
-              size="lg" 
-              onClick={resetGame}
-              className="px-8 py-6 text-xl rounded-full bg-primary hover:bg-primary/80 neon-shadow animate-pulse"
-            >
-              <Play className="mr-2 h-6 w-6 fill-current" /> START GAME
-            </Button>
-            <p className="mt-8 text-xs text-muted-foreground tracking-widest uppercase opacity-60">Use Arrow Keys or WASD</p>
-          </div>
-        )}
-
-        {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 rounded-lg animate-game-over-pop">
-            <h2 className="text-3xl font-bold text-destructive mb-2 uppercase tracking-widest">System Failure</h2>
-            <div className="text-center mb-8">
-              <p className="text-muted-foreground text-sm uppercase mb-1">Final Score</p>
-              <p className="text-6xl font-bold neon-text-red font-headline">{score}</p>
+          {/* Overlays */}
+          {gameState === 'START' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-xl backdrop-blur-sm animate-in fade-in duration-500">
+              <div className="mb-8 text-center">
+                <h1 className="text-6xl font-black italic tracking-tighter leading-none">
+                  <span className="neon-text-red block">NEON</span>
+                  <span className="neon-text-green block translate-x-2">SERPENT</span>
+                </h1>
+              </div>
+              <Button 
+                size="lg" 
+                onClick={resetGame}
+                className="group relative px-10 py-7 text-xl rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-95 neon-shadow overflow-hidden"
+              >
+                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
+                <Play className="mr-2 h-6 w-6 fill-current relative z-10" /> 
+                <span className="relative z-10 font-bold tracking-widest">START ARCADE</span>
+              </Button>
+              <div className="mt-8 flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold opacity-60">
+                <Keyboard className="w-4 h-4" />
+                <span>ARROWS or WASD</span>
+              </div>
             </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/95 rounded-xl animate-game-over-pop backdrop-blur-md">
+              <span className="text-xs font-bold text-destructive/80 uppercase tracking-[0.5em] mb-2">Connection Terminated</span>
+              <h2 className="text-4xl font-black text-destructive mb-6 uppercase italic tracking-tighter">GAME OVER</h2>
+              <div className="text-center mb-8 px-6 py-4 bg-white/5 rounded-2xl border border-white/5 min-w-[160px]">
+                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-1">Final Units</p>
+                <p className="text-6xl font-black neon-text-red tabular-nums">{score}</p>
+              </div>
+              <Button 
+                size="lg" 
+                variant="outline"
+                onClick={resetGame}
+                className="border-primary/50 text-primary hover:bg-primary hover:text-white px-10 py-7 text-xl rounded-full transition-all duration-300 active:scale-95"
+              >
+                <RotateCcw className="mr-2 h-6 w-6" /> REBOOT
+              </Button>
+            </div>
+          )}
+        </div>
+      </div>
+
+      {/* Input Feedback / Mobile Controls */}
+      <div className="mt-8 w-full max-w-[400px]">
+        {/* Desktop Controls Tip */}
+        <div className="hidden md:flex justify-center items-center gap-6 opacity-40 text-[10px] font-bold uppercase tracking-[0.3em]">
+          <div className="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-lg">
+             <span className="text-primary">W/A/S/D</span> 
+             <span className="text-white/30">MOVEMENT</span>
+          </div>
+          <div className="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-lg">
+             <span className="text-accent">ARROWS</span> 
+             <span className="text-white/30">DIRECTION</span>
+          </div>
+        </div>
+
+        {/* Mobile Controller */}
+        <div className="md:hidden flex flex-col items-center">
+          <div className="grid grid-cols-3 gap-2 p-4 bg-white/5 rounded-[2.5rem] border border-white/5 backdrop-blur-sm shadow-inner">
+            <div />
             <Button 
-              size="lg" 
-              variant="outline"
-              onClick={resetGame}
-              className="border-primary text-primary hover:bg-primary hover:text-white px-8 py-6 text-xl rounded-full"
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+              onPointerDown={() => engineRef.current.setDirection('UP')}
             >
-              <RotateCcw className="mr-2 h-6 w-6" /> REBOOT
+              <ArrowUp className="w-8 h-8 text-primary" />
+            </Button>
+            <div />
+            
+            <Button 
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+              onPointerDown={() => engineRef.current.setDirection('LEFT')}
+            >
+              <ArrowLeft className="w-8 h-8 text-primary" />
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+              onPointerDown={() => engineRef.current.setDirection('DOWN')}
+            >
+              <ArrowDown className="w-8 h-8 text-primary" />
+            </Button>
+            
+            <Button 
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+              onPointerDown={() => engineRef.current.setDirection('RIGHT')}
+            >
+              <ArrowRight className="w-8 h-8 text-primary" />
             </Button>
           </div>
-        )}
+        </div>
       </div>
 
-      {/* Mobile Controls */}
-      <div className="grid grid-cols-3 gap-3 mt-10 md:hidden">
-        <div />
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="h-14 w-14 rounded-full bg-white/5 border-white/20"
-          onPointerDown={() => engineRef.current.setDirection('UP')}
-        >
-          <ArrowUp className="w-8 h-8" />
-        </Button>
-        <div />
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="h-14 w-14 rounded-full bg-white/5 border-white/20"
-          onPointerDown={() => engineRef.current.setDirection('LEFT')}
-        >
-          <ArrowLeft className="w-8 h-8" />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="h-14 w-14 rounded-full bg-white/5 border-white/20"
-          onPointerDown={() => engineRef.current.setDirection('DOWN')}
-        >
-          <ArrowDown className="w-8 h-8" />
-        </Button>
-        <Button 
-          variant="outline" 
-          size="icon" 
-          className="h-14 w-14 rounded-full bg-white/5 border-white/20"
-          onPointerDown={() => engineRef.current.setDirection('RIGHT')}
-        >
-          <ArrowRight className="w-8 h-8" />
-        </Button>
-      </div>
-
-      <footer className="mt-12 flex flex-col items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.4em] opacity-40">
+      <footer className="mt-auto pt-8 pb-4 flex flex-col items-center gap-2 text-[9px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30">
         <span>&copy; 2024 NEON SERPENT ARCADE</span>
-        <span className="opacity-80">MADE BY <span className="neon-text-red font-bold">MUNAWWAR</span></span>
+        <span className="opacity-100 scale-110">MADE BY <span className="neon-text-red font-black">MUNAWWAR</span></span>
       </footer>
     </div>
   );
