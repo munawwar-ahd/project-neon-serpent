@@ -4,7 +4,7 @@ import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SnakeEngine } from './SnakeEngine';
 import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SPEED } from './types';
 import { sounds } from '@/lib/sounds';
-import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Maximize, Share2 } from 'lucide-react';
+import { Trophy, Play, Pause, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Maximize, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from "@/hooks/use-toast";
 import { cn } from '@/lib/utils';
@@ -41,7 +41,20 @@ export default function SnakeGame() {
     lastUpdateRef.current = performance.now();
   };
 
+  const togglePause = () => {
+    if (gameState === 'PLAYING') setGameState('PAUSED');
+    else if (gameState === 'PAUSED') {
+      setGameState('PLAYING');
+      lastUpdateRef.current = performance.now();
+    }
+  };
+
   const handleKeyDown = useCallback((e: KeyboardEvent) => {
+    if (e.key.toLowerCase() === 'p') {
+      togglePause();
+      return;
+    }
+
     if (gameState !== 'PLAYING') return;
     switch (e.key) {
       case 'ArrowUp': case 'w': case 'W': engineRef.current.setDirection('UP'); break;
@@ -81,11 +94,9 @@ export default function SnakeGame() {
         return;
       }
     } catch (err) {
-      // Ignore user cancellations, only handle actual errors
       if ((err as Error).name === 'AbortError') return;
     }
 
-    // Fallback: Copy to clipboard
     try {
       await navigator.clipboard.writeText(window.location.href);
       toast({
@@ -167,12 +178,18 @@ export default function SnakeGame() {
         if (eaten) {
           setScore(engineRef.current.score);
           sounds?.playEat();
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate(50);
+          }
           speedRef.current = Math.max(MIN_SPEED, speedRef.current - SPEED_INCREMENT);
         }
         
         if (engineRef.current.isGameOver) {
           setGameState('GAMEOVER');
           sounds?.playGameOver();
+          if (typeof navigator !== 'undefined' && navigator.vibrate) {
+            navigator.vibrate([100, 50, 100]);
+          }
           saveHighScore(engineRef.current.score);
         }
         lastUpdateRef.current = timestamp;
@@ -197,6 +214,11 @@ export default function SnakeGame() {
     <div className="flex flex-col items-center justify-center min-h-screen p-4 select-none relative z-10 overflow-hidden">
       {/* Utility Bar */}
       <div className="absolute top-4 right-4 flex gap-2">
+        {(gameState === 'PLAYING' || gameState === 'PAUSED') && (
+          <Button variant="ghost" size="icon" onClick={togglePause} className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60">
+            {gameState === 'PAUSED' ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </Button>
+        )}
         <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60">
           <Maximize className="w-4 h-4" />
         </Button>
@@ -228,7 +250,7 @@ export default function SnakeGame() {
             ref={canvasRef}
             width={GRID_SIZE * CELL_SIZE}
             height={GRID_SIZE * CELL_SIZE}
-            className="rounded-xl bg-black/60 backdrop-blur-xl"
+            className="rounded-xl bg-black/60 backdrop-blur-xl max-w-full h-auto"
           />
 
           {/* Overlays */}
@@ -250,12 +272,19 @@ export default function SnakeGame() {
                 <Play className="mr-2 h-6 w-6 fill-current" /> 
                 <span className="font-bold tracking-widest uppercase">Start Game</span>
               </Button>
-              
-              <div className="mt-8 flex flex-col items-center gap-3 opacity-40">
-                <div className="flex items-center gap-2 text-[10px] text-white uppercase tracking-[0.3em] font-bold">
-                  <span>Arrows or WASD</span>
-                </div>
-              </div>
+            </div>
+          )}
+
+          {gameState === 'PAUSED' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-xl backdrop-blur-sm">
+              <h2 className="text-4xl font-black neon-text-yellow mb-6 uppercase italic tracking-tighter">PAUSED</h2>
+              <Button 
+                size="lg" 
+                onClick={togglePause}
+                className="px-10 py-7 text-xl rounded-full bg-white/10 border border-white/20 text-white hover:bg-white/20 transition-all"
+              >
+                <Play className="mr-2 h-6 w-6 fill-current" /> RESUME
+              </Button>
             </div>
           )}
 
@@ -281,41 +310,52 @@ export default function SnakeGame() {
       </div>
 
       {/* Mobile Controller */}
-      <div className="md:hidden mt-8 flex flex-col items-center">
-        <div className="grid grid-cols-3 gap-3 p-4 bg-white/5 rounded-[2.5rem] border border-white/5 backdrop-blur-sm shadow-inner">
+      <div className="md:hidden mt-8 flex flex-col items-center touch-none">
+        <div className="grid grid-cols-3 grid-rows-3 gap-2 p-2 bg-white/5 rounded-full border border-white/5 backdrop-blur-md shadow-inner">
+          {/* Row 1 */}
           <div />
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-            onPointerDown={() => engineRef.current.setDirection('UP')}
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('UP'); }}
           >
             <ArrowUp className="w-8 h-8 text-primary" />
           </Button>
           <div />
           
+          {/* Row 2 */}
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-            onPointerDown={() => engineRef.current.setDirection('LEFT')}
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('LEFT'); }}
           >
             <ArrowLeft className="w-8 h-8 text-primary" />
           </Button>
-          
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-            onPointerDown={() => engineRef.current.setDirection('DOWN')}
+            className="h-16 w-16 rounded-full bg-white/5 border-white/20 hover:bg-white/10 transition-all active:scale-90"
+            onPointerDown={(e) => { e.preventDefault(); togglePause(); }}
           >
-            <ArrowDown className="w-8 h-8 text-primary" />
+             {gameState === 'PAUSED' ? <Play className="w-6 h-6 text-white/40" /> : <Pause className="w-6 h-6 text-white/40" />}
           </Button>
-          
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-            onPointerDown={() => engineRef.current.setDirection('RIGHT')}
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('RIGHT'); }}
           >
             <ArrowRight className="w-8 h-8 text-primary" />
           </Button>
+          
+          {/* Row 3 */}
+          <div />
+          <Button 
+            variant="outline" 
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('DOWN'); }}
+          >
+            <ArrowDown className="w-8 h-8 text-primary" />
+          </Button>
+          <div />
         </div>
       </div>
 
