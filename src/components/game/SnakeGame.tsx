@@ -204,13 +204,16 @@ export default function SnakeGame() {
         <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
           <div key={introStep} className="animate-intro-text text-center px-6">
             {introStep === 0 && (
-              <h1 className="text-6xl font-black neon-text-red italic tracking-tighter">Hi!</h1>
+              <h1 className="text-6xl font-black neon-text-red italic tracking-tighter uppercase">Welcome!</h1>
             )}
             {introStep === 1 && (
-              <h1 className="text-4xl md:text-6xl font-black neon-text-green italic tracking-tighter">I&apos;m Munawwar</h1>
+              <h1 className="text-5xl font-black neon-text-yellow italic tracking-tighter">Enjoy the game :)</h1>
             )}
             {introStep === 2 && (
-              <h1 className="text-5xl font-black neon-text-yellow italic tracking-tighter">Enjoy the game :)</h1>
+              <div className="flex flex-col items-center">
+                <p className="text-[10px] uppercase tracking-[0.5em] text-muted-foreground font-bold mb-2">Arcade Experience</p>
+                <h2 className="text-2xl font-black neon-text-green italic tracking-tight">Designed & Developed by Munawwar</h2>
+              </div>
             )}
           </div>
         </div>
@@ -290,7 +293,7 @@ export default function SnakeGame() {
         
         <div className="text-center opacity-80">
           <p className="text-[10px] uppercase tracking-[0.5em] font-black neon-text-green">
-            Developed by <span className="text-white">Munawwar</span>
+            Designed & Developed by <span className="text-white">Munawwar</span>
           </p>
         </div>
       </div>
