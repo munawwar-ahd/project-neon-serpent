@@ -2,6 +2,9 @@
 
 A visually polished, arcade-style Snake game built with Next.js, React, and HTML5 Canvas.
 
+# TRY IT OUT
+https://project-neon-serpent.vercel.app/
+
 ## Features
 - **Neon Visuals**: Glow effects, vibrant colors, and smooth animations.
 - **Arcade Feel**: Precise movement and responsive controls.
