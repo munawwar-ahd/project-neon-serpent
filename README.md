@@ -1,34 +1,77 @@
-# Neon Serpent
+## Neon Serpent
 
-A visually polished, arcade-style Snake game built with Next.js, React, and HTML5 Canvas.
+A minimal neon-styled browser arcade game inspired by the classic Snake.
 
-# TRY IT OUT
+Built as a lightweight web game with smooth visuals and fast gameplay.
+Play directly in your browser and try to beat your best score.
+
+Snake games remain one of the most recognizable retro arcade mechanics—guide the snake, eat food, grow longer, and avoid crashing.
+
+## 🎮 Play the Game
+
+# 👉 Live Demo
+
 https://project-neon-serpent.vercel.app/
+✨ Features
 
-## Features
-- **Neon Visuals**: Glow effects, vibrant colors, and smooth animations.
-- **Arcade Feel**: Precise movement and responsive controls.
-- **Classic Mechanics**: Score tracking, difficulty scaling, and high-score persistence.
-- **Audio Effects**: Built-in sound synthesizer for eat and game-over events.
-- **Responsive Design**: Playable on desktop and mobile.
+Neon arcade visual style
 
-## Controls
-- **Desktop**: 
-  - Movement: Arrow Keys or WASD
-- **Mobile**:
-  - Movement: On-screen D-pad
+Smooth snake movement
 
-## How to Run Locally
-1. Clone the repository.
-2. Install dependencies: `npm install`
-3. Run the development server: `npm run dev`
-4. Open [http://localhost:9002](http://localhost:9002) in your browser.
+Score & best score tracker
 
-## Deployment to Firebase
-1. Build the project: `npm run build`
-2. Initialize Firebase: `firebase init hosting`
-3. Set the public directory to `.next` (for Next.js Apps) or export as static if preferred.
-4. Deploy: `firebase deploy`
+Lightweight browser game
 
----
-&copy; 2024 Neon Serpent Arcade
+Instant play (no install)
+
+🕹 Controls
+
+Keyboard
+
+↑ ↓ ← →
+Arrow Keys to control the snake
+
+Goal:
+
+Eat food
+
+Grow longer
+
+Avoid collisions
+
+Beat your best score
+
+🛠 Built With
+
+HTML
+
+CSS
+
+JavaScript
+
+Canvas API
+
+Hosted using:
+
+GitHub
+
+Vercel
+
+🚀 Run Locally
+
+Clone the repository:
+
+git clone https://github.com/munawwar-ahd/project-neon-serpent.git
+
+Open index.html in your browser.
+
+🧠 About
+
+Neon Serpent is a small experiment in building browser-based arcade games with modern visuals while keeping the gameplay simple and addictive.
+
+👨‍💻 Author
+
+Munawwar Ahmed
+
+GitHub:
+https://github.com/munawwar-ahd
