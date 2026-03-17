@@ -2,9 +2,9 @@
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
 import { SnakeEngine } from './SnakeEngine';
-import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SPEED, Direction } from './types';
+import { GameState, GRID_SIZE, CELL_SIZE, INITIAL_SPEED, SPEED_INCREMENT, MIN_SPEED } from './types';
 import { sounds } from '@/lib/sounds';
-import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Keyboard } from 'lucide-react';
+import { Trophy, Play, RotateCcw, ArrowUp, ArrowDown, ArrowLeft, ArrowRight, Maximize, Share2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 
@@ -53,6 +53,35 @@ export default function SnakeGame() {
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [handleKeyDown]);
+
+  const toggleFullscreen = () => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().catch((e) => {
+        console.error(`Error attempting to enable full-screen mode: ${e.message}`);
+      });
+    } else {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      }
+    }
+  };
+
+  const handleShare = async () => {
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: 'Neon Serpent Arcade',
+          text: 'Check out this neon snake game!',
+          url: window.location.href,
+        });
+      } catch (err) {
+        console.error('Share failed:', err);
+      }
+    } else {
+      navigator.clipboard.writeText(window.location.href);
+      alert('Link copied to clipboard!');
+    }
+  };
 
   const draw = useCallback((ctx: CanvasRenderingContext2D, timestamp: number) => {
     const engine = engineRef.current;
@@ -148,8 +177,18 @@ export default function SnakeGame() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 select-none relative z-10 overflow-hidden">
+      {/* Utility Bar */}
+      <div className="absolute top-4 right-4 flex gap-2">
+        <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60">
+          <Maximize className="w-4 h-4" />
+        </Button>
+        <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full bg-white/5 border border-white/10 hover:bg-white/10 text-white/60">
+          <Share2 className="w-4 h-4" />
+        </Button>
+      </div>
+
       {/* HUD */}
-      <div className="w-full max-w-[400px] flex justify-between items-center mb-4 px-4 bg-black/20 backdrop-blur-md rounded-2xl py-3 border border-white/5">
+      <div className="w-full max-w-[400px] flex justify-between items-center mb-6 px-4 bg-black/20 backdrop-blur-md rounded-2xl py-3 border border-white/5">
         <div className="flex flex-col">
           <span className="text-[10px] uppercase tracking-[0.2em] text-muted-foreground font-bold">Score</span>
           <span className="text-3xl font-black neon-text-red tabular-nums">{score}</span>
@@ -164,7 +203,7 @@ export default function SnakeGame() {
       </div>
 
       {/* Game Canvas Area */}
-      <div className="relative group">
+      <div className="relative">
         <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 rounded-[2rem] blur-2xl opacity-50" />
         <div className="relative p-1.5 rounded-2xl bg-white/5 border border-white/10 shadow-2xl overflow-hidden">
           <canvas
@@ -176,35 +215,38 @@ export default function SnakeGame() {
 
           {/* Overlays */}
           {gameState === 'START' && (
-            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-xl backdrop-blur-sm animate-in fade-in duration-500">
-              <div className="mb-8 text-center">
-                <h1 className="text-6xl font-black italic tracking-tighter leading-none">
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-xl backdrop-blur-sm">
+              <div className="mb-10 text-center">
+                <h1 className="text-6xl font-black italic tracking-tighter leading-none mb-2">
                   <span className="neon-text-red block">NEON</span>
                   <span className="neon-text-green block translate-x-2">SERPENT</span>
                 </h1>
+                <p className="text-[10px] text-muted-foreground tracking-[0.5em] font-bold uppercase opacity-50">Browser Arcade v1.0</p>
               </div>
+              
               <Button 
                 size="lg" 
                 onClick={resetGame}
-                className="group relative px-10 py-7 text-xl rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-95 neon-shadow overflow-hidden"
+                className="group relative px-10 py-7 text-xl rounded-full bg-primary hover:bg-primary/90 transition-all duration-300 hover:scale-105 active:scale-95 neon-shadow"
               >
-                <div className="absolute inset-0 bg-white/20 translate-y-full group-hover:translate-y-0 transition-transform duration-300" />
-                <Play className="mr-2 h-6 w-6 fill-current relative z-10" /> 
-                <span className="relative z-10 font-bold tracking-widest">START ARCADE</span>
+                <Play className="mr-2 h-6 w-6 fill-current" /> 
+                <span className="font-bold tracking-widest uppercase">Start Game</span>
               </Button>
-              <div className="mt-8 flex items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.3em] font-bold opacity-60">
-                <Keyboard className="w-4 h-4" />
-                <span>ARROWS or WASD</span>
+              
+              <div className="mt-8 flex flex-col items-center gap-3 opacity-40">
+                <div className="flex items-center gap-2 text-[10px] text-white uppercase tracking-[0.3em] font-bold">
+                  <span>Arrows or WASD</span>
+                </div>
               </div>
             </div>
           )}
 
           {gameState === 'GAMEOVER' && (
             <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/95 rounded-xl animate-game-over-pop backdrop-blur-md">
-              <span className="text-xs font-bold text-destructive/80 uppercase tracking-[0.5em] mb-2">Connection Terminated</span>
+              <span className="text-xs font-bold text-destructive/80 uppercase tracking-[0.5em] mb-2">System Failure</span>
               <h2 className="text-4xl font-black text-destructive mb-6 uppercase italic tracking-tighter">GAME OVER</h2>
               <div className="text-center mb-8 px-6 py-4 bg-white/5 rounded-2xl border border-white/5 min-w-[160px]">
-                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-1">Final Units</p>
+                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest mb-1">Final Score</p>
                 <p className="text-6xl font-black neon-text-red tabular-nums">{score}</p>
               </div>
               <Button 
@@ -213,70 +255,60 @@ export default function SnakeGame() {
                 onClick={resetGame}
                 className="border-primary/50 text-primary hover:bg-primary hover:text-white px-10 py-7 text-xl rounded-full transition-all duration-300 active:scale-95"
               >
-                <RotateCcw className="mr-2 h-6 w-6" /> REBOOT
+                <RotateCcw className="mr-2 h-6 w-6" /> RETRY
               </Button>
             </div>
           )}
         </div>
       </div>
 
-      {/* Input Feedback / Mobile Controls */}
-      <div className="mt-8 w-full max-w-[400px]">
-        {/* Desktop Controls Tip */}
-        <div className="hidden md:flex justify-center items-center gap-6 opacity-40 text-[10px] font-bold uppercase tracking-[0.3em]">
-          <div className="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-lg">
-             <span className="text-primary">W/A/S/D</span> 
-             <span className="text-white/30">MOVEMENT</span>
-          </div>
-          <div className="flex items-center gap-2 px-3 py-1.5 border border-white/10 rounded-lg">
-             <span className="text-accent">ARROWS</span> 
-             <span className="text-white/30">DIRECTION</span>
-          </div>
-        </div>
-
-        {/* Mobile Controller */}
-        <div className="md:hidden flex flex-col items-center">
-          <div className="grid grid-cols-3 gap-2 p-4 bg-white/5 rounded-[2.5rem] border border-white/5 backdrop-blur-sm shadow-inner">
-            <div />
-            <Button 
-              variant="outline" 
-              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-              onPointerDown={() => engineRef.current.setDirection('UP')}
-            >
-              <ArrowUp className="w-8 h-8 text-primary" />
-            </Button>
-            <div />
-            
-            <Button 
-              variant="outline" 
-              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-              onPointerDown={() => engineRef.current.setDirection('LEFT')}
-            >
-              <ArrowLeft className="w-8 h-8 text-primary" />
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-              onPointerDown={() => engineRef.current.setDirection('DOWN')}
-            >
-              <ArrowDown className="w-8 h-8 text-primary" />
-            </Button>
-            
-            <Button 
-              variant="outline" 
-              className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
-              onPointerDown={() => engineRef.current.setDirection('RIGHT')}
-            >
-              <ArrowRight className="w-8 h-8 text-primary" />
-            </Button>
-          </div>
+      {/* Mobile Controller */}
+      <div className="md:hidden mt-8 flex flex-col items-center">
+        <div className="grid grid-cols-3 gap-3 p-4 bg-white/5 rounded-[2.5rem] border border-white/5 backdrop-blur-sm shadow-inner">
+          <div />
+          <Button 
+            variant="outline" 
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+            onPointerDown={() => engineRef.current.setDirection('UP')}
+          >
+            <ArrowUp className="w-8 h-8 text-primary" />
+          </Button>
+          <div />
+          
+          <Button 
+            variant="outline" 
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+            onPointerDown={() => engineRef.current.setDirection('LEFT')}
+          >
+            <ArrowLeft className="w-8 h-8 text-primary" />
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+            onPointerDown={() => engineRef.current.setDirection('DOWN')}
+          >
+            <ArrowDown className="w-8 h-8 text-primary" />
+          </Button>
+          
+          <Button 
+            variant="outline" 
+            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-colors active:scale-90"
+            onPointerDown={() => engineRef.current.setDirection('RIGHT')}
+          >
+            <ArrowRight className="w-8 h-8 text-primary" />
+          </Button>
         </div>
       </div>
 
+      {/* Desktop Hint */}
+      <div className="hidden md:block mt-8 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
+        WASD to Move &bull; P to Pause
+      </div>
+
       <footer className="mt-auto pt-8 pb-4 flex flex-col items-center gap-2 text-[9px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30">
-        <span>&copy; 2024 NEON SERPENT ARCADE</span>
-        <span className="opacity-100 scale-110">MADE BY <span className="neon-text-red font-black">MUNAWWAR</span></span>
+        <span>&copy; 2024 NEON SERPENT</span>
+        <span className="opacity-100">CRAFTED BY <span className="neon-text-red font-black">MUNAWWAR</span></span>
       </footer>
     </div>
   );
