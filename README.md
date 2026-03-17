@@ -1,15 +1,14 @@
-## Neon Serpent
+# Neon Serpent
 
-A minimal neon-styled browser arcade game inspired by the classic Snake.
-
-Built as a lightweight web game with smooth visuals and fast gameplay.
-Play directly in your browser and try to beat your best score.
+- A minimal neon-styled browser arcade game inspired by the classic Snake.
+- Built as a lightweight web game with smooth visuals and fast gameplay.
+- Play directly in your browser and try to beat your best score.
 
 Snake games remain one of the most recognizable retro arcade mechanics—guide the snake, eat food, grow longer, and avoid crashing.
 
-## 🎮 Play the Game
+# 🎮 Play the Game
 
-# 👉 Live Demo
+## 👉 Live Demo
 
 https://project-neon-serpent.vercel.app/
 ✨ Features
