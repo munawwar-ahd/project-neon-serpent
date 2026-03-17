@@ -178,108 +178,116 @@ export default function SnakeGame() {
   }, [gameLoop]);
 
   return (
-    <div className="flex flex-col items-center justify-start min-h-screen p-4 select-none relative z-10 overflow-x-hidden md:pb-10 pb-[280px]">
-      {/* Utility Buttons */}
-      <div className="w-full max-w-[400px] flex justify-end gap-2 mb-4">
-        <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full bg-white/5 border border-white/10 text-white/60">
-          <Maximize className="w-4 h-4" />
-        </Button>
-        <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full bg-white/5 border border-white/10 text-white/60">
-          <Share2 className="w-4 h-4" />
-        </Button>
-      </div>
-
-      {/* HUD */}
-      <div className="w-full max-w-[400px] flex justify-between items-center mb-6 px-4 bg-black/20 backdrop-blur-md rounded-2xl py-3 border border-white/5">
-        <div className="flex flex-col">
-          <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Score</span>
-          <span className="text-3xl font-black neon-text-red tabular-nums">{score}</span>
-        </div>
-        <div className="flex flex-col items-end">
-          <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
-            <Trophy className="w-3 h-3 text-secondary" />
-            <span>Best</span>
+    <div className="console-wrapper min-h-screen">
+      {/* SCREEN AREA */}
+      <div className="screen-area">
+        {/* HUD */}
+        <div className="w-full max-w-[400px] flex justify-between items-center mb-4 px-4 bg-black/40 backdrop-blur-md rounded-2xl py-3 border border-white/5">
+          <div className="flex flex-col">
+            <span className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Score</span>
+            <span className="text-2xl font-black neon-text-red tabular-nums">{score}</span>
           </div>
-          <span className="text-3xl font-black neon-text-yellow tabular-nums">{highScore}</span>
-        </div>
-      </div>
-
-      {/* Game Area */}
-      <div className="relative w-full max-w-[400px] aspect-square">
-        <canvas
-          ref={canvasRef}
-          width={GRID_SIZE * CELL_SIZE}
-          height={GRID_SIZE * CELL_SIZE}
-          className="rounded-xl bg-black/60 backdrop-blur-xl w-full h-full border border-white/10"
-        />
-
-        {/* Overlays */}
-        {gameState === 'START' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/85 rounded-xl backdrop-blur-sm z-50">
-            <h1 className="text-5xl font-black italic tracking-tighter mb-8 text-center">
-              <span className="neon-text-red block">NEON</span>
-              <span className="neon-text-green block">SERPENT</span>
-            </h1>
-            <Button size="lg" onClick={resetGame} className="px-10 py-7 text-xl rounded-full bg-primary neon-shadow animate-pulse">
-              <Play className="mr-2 h-6 w-6" /> START
-            </Button>
-          </div>
-        )}
-
-        {gameState === 'PAUSED' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/60 rounded-xl backdrop-blur-sm z-50">
-            <h2 className="text-4xl font-black neon-text-yellow mb-6">PAUSED</h2>
-            <Button size="lg" onClick={togglePause} className="px-10 py-7 rounded-full bg-white/10 text-white border border-white/20">
-              <Play className="mr-2 h-6 w-6" /> RESUME
-            </Button>
-          </div>
-        )}
-
-        {gameState === 'GAMEOVER' && (
-          <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/95 rounded-xl backdrop-blur-md z-50">
-            <h2 className="text-4xl font-black text-destructive mb-6 italic">GAME OVER</h2>
-            <div className="text-center mb-8">
-              <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest">Final Score</p>
-              <p className="text-6xl font-black neon-text-red">{score}</p>
+          <div className="flex flex-col items-end">
+            <div className="flex items-center gap-1.5 text-[10px] uppercase tracking-widest text-muted-foreground font-bold">
+              <Trophy className="w-3 h-3 text-secondary" />
+              <span>Best</span>
             </div>
-            <Button size="lg" variant="outline" onClick={resetGame} className="border-primary/50 text-primary hover:bg-primary px-10 py-7 rounded-full">
-              <RotateCcw className="mr-2 h-6 w-6" /> RETRY
-            </Button>
+            <span className="text-2xl font-black neon-text-yellow tabular-nums">{highScore}</span>
           </div>
-        )}
+        </div>
+
+        {/* Game Canvas Container */}
+        <div className="relative w-full max-w-[400px] aspect-square flex items-center justify-center">
+          <canvas
+            ref={canvasRef}
+            width={GRID_SIZE * CELL_SIZE}
+            height={GRID_SIZE * CELL_SIZE}
+            className="rounded-xl bg-black/80 backdrop-blur-xl w-full h-full border border-white/10 shadow-2xl"
+          />
+
+          {/* Overlays */}
+          {gameState === 'START' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/90 rounded-xl backdrop-blur-md z-50">
+              <h1 className="text-4xl font-black italic tracking-tighter mb-8 text-center px-4">
+                <span className="neon-text-red block leading-none">NEON</span>
+                <span className="neon-text-green block leading-none mt-1">SERPENT</span>
+              </h1>
+              <Button size="lg" onClick={resetGame} className="px-10 py-8 text-xl rounded-full bg-primary neon-shadow animate-pulse font-black italic">
+                <Play className="mr-2 h-6 w-6" /> START
+              </Button>
+            </div>
+          )}
+
+          {gameState === 'PAUSED' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/70 rounded-xl backdrop-blur-sm z-50">
+              <h2 className="text-4xl font-black neon-text-yellow mb-6">PAUSED</h2>
+              <Button size="lg" onClick={togglePause} className="px-10 py-7 rounded-full bg-white/10 text-white border border-white/20 font-bold">
+                <Play className="mr-2 h-6 w-6" /> RESUME
+              </Button>
+            </div>
+          )}
+
+          {gameState === 'GAMEOVER' && (
+            <div className="absolute inset-0 flex flex-col items-center justify-center bg-black/95 rounded-xl backdrop-blur-md z-50 p-6">
+              <h2 className="text-4xl font-black text-destructive mb-6 italic">GAME OVER</h2>
+              <div className="text-center mb-8">
+                <p className="text-muted-foreground text-[10px] uppercase font-bold tracking-widest">Final Score</p>
+                <p className="text-6xl font-black neon-text-red">{score}</p>
+              </div>
+              <Button size="lg" variant="outline" onClick={resetGame} className="border-primary text-primary hover:bg-primary px-10 py-7 rounded-full font-bold">
+                <RotateCcw className="mr-2 h-6 w-6" /> RETRY
+              </Button>
+            </div>
+          )}
+        </div>
+
+        {/* Utility Toolbar (Desktop mostly, but accessible) */}
+        <div className="w-full max-w-[400px] flex justify-center gap-4 mt-6">
+          <Button variant="ghost" size="icon" onClick={togglePause} className="rounded-full bg-white/5 border border-white/10 text-white/60">
+            {gameState === 'PAUSED' ? <Play className="w-4 h-4" /> : <Pause className="w-4 h-4" />}
+          </Button>
+          <Button variant="ghost" size="icon" onClick={toggleFullscreen} className="rounded-full bg-white/5 border border-white/10 text-white/60">
+            <Maximize className="w-4 h-4" />
+          </Button>
+          <Button variant="ghost" size="icon" onClick={handleShare} className="rounded-full bg-white/5 border border-white/10 text-white/60">
+            <Share2 className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Mobile Controls (Fixed D-pad) */}
-      <div className="mobile-controls">
-        <button 
-          id="up" 
-          onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('UP'); }}
-        >
-          ▲
-        </button>
-        <div className="middle-row">
+      {/* CONTROL AREA (Console Controller) */}
+      <div className="control-area">
+        <div className="mobile-dpad">
           <button 
-            id="left" 
-            onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('LEFT'); }}
+            id="up" 
+            onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('UP'); }}
           >
-            ◀
+            ▲
           </button>
+          <div className="middle-row">
+            <button 
+              id="left" 
+              onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('LEFT'); }}
+            >
+              ◀
+            </button>
+            <button 
+              id="right" 
+              onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('RIGHT'); }}
+            >
+              ▶
+            </button>
+          </div>
           <button 
-            id="right" 
-            onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('RIGHT'); }}
+            id="down" 
+            onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('DOWN'); }}
           >
-            ▶
+            ▼
           </button>
         </div>
-        <button 
-          id="down" 
-          onTouchStart={(e) => { e.preventDefault(); engineRef.current.setDirection('DOWN'); }}
-        >
-          ▼
-        </button>
       </div>
 
-      <footer className="mt-8 text-[9px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30 text-center pb-10">
+      <footer className="hidden md:block mt-auto text-[9px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30 text-center pb-4">
         <span>&copy; 2024 NEON SERPENT</span><br/>
         <span>CRAFTED BY <span className="neon-text-red font-black">MUNAWWAR</span></span>
       </footer>
