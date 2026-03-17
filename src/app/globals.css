@@ -58,3 +58,14 @@
 canvas {
   touch-action: none;
 }
+
+@keyframes intro-fade {
+  0% { opacity: 0; transform: translateY(20px) scale(0.9); filter: blur(10px); }
+  20% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  80% { opacity: 1; transform: translateY(0) scale(1); filter: blur(0); }
+  100% { opacity: 0; transform: translateY(-20px) scale(1.1); filter: blur(10px); }
+}
+
+.animate-intro-text {
+  animation: intro-fade 2s ease-in-out forwards;
+}

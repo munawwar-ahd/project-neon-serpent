@@ -12,12 +12,30 @@ export default function SnakeGame() {
   const { toast } = useToast();
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const engineRef = useRef<SnakeEngine>(new SnakeEngine());
+  
   const [gameState, setGameState] = useState<GameState>('START');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  
+  // Intro Sequence State
+  const [showIntro, setShowIntro] = useState(true);
+  const [introStep, setIntroStep] = useState(0);
+
   const frameRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(0);
   const speedRef = useRef<number>(INITIAL_SPEED);
+
+  // Intro Logic
+  useEffect(() => {
+    if (showIntro) {
+      const timers = [
+        setTimeout(() => setIntroStep(1), 2000),
+        setTimeout(() => setIntroStep(2), 4000),
+        setTimeout(() => setShowIntro(false), 6000),
+      ];
+      return () => timers.forEach(t => clearTimeout(t));
+    }
+  }, [showIntro]);
 
   // Load High Score
   useEffect(() => {
@@ -181,6 +199,23 @@ export default function SnakeGame() {
 
   return (
     <div className="flex flex-col items-center justify-center min-h-screen p-4 bg-[#111718]">
+      {/* Intro Overlay */}
+      {showIntro && (
+        <div className="fixed inset-0 z-[100] flex items-center justify-center bg-black">
+          <div key={introStep} className="animate-intro-text text-center px-6">
+            {introStep === 0 && (
+              <h1 className="text-6xl font-black neon-text-red italic tracking-tighter">Hi!</h1>
+            )}
+            {introStep === 1 && (
+              <h1 className="text-4xl md:text-6xl font-black neon-text-green italic tracking-tighter">I&apos;m Munawwar Ahmed</h1>
+            )}
+            {introStep === 2 && (
+              <h1 className="text-5xl font-black neon-text-yellow italic tracking-tighter">Enjoy the game :)</h1>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* HUD */}
       <div className="w-full max-w-[400px] flex justify-between items-center mb-6 px-6 bg-black/40 backdrop-blur-md rounded-2xl py-4 border border-white/5 shadow-xl">
         <div className="flex flex-col">
