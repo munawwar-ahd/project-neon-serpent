@@ -1,3 +1,4 @@
+
 "use client";
 
 import React, { useEffect, useRef, useState, useCallback } from 'react';
@@ -16,9 +17,20 @@ export default function SnakeGame() {
   const [gameState, setGameState] = useState<GameState>('START');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
   const frameRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(0);
   const speedRef = useRef<number>(INITIAL_SPEED);
+
+  // Detect mobile/touch support
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768 || 'ontouchstart' in window || navigator.maxTouchPoints > 0);
+    };
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   // Load High Score
   useEffect(() => {
@@ -243,7 +255,7 @@ export default function SnakeGame() {
       </div>
 
       {/* Game Canvas Area */}
-      <div className="relative">
+      <div className="relative mb-32 md:mb-0">
         <div className="absolute -inset-4 bg-gradient-to-br from-primary/20 via-transparent to-accent/20 rounded-[2rem] blur-2xl opacity-50" />
         <div className="relative p-1.5 rounded-2xl bg-white/5 border border-white/10 shadow-2xl overflow-hidden">
           <canvas
@@ -309,60 +321,53 @@ export default function SnakeGame() {
         </div>
       </div>
 
-      {/* Mobile Controller */}
-      <div className="md:hidden mt-8 flex flex-col items-center touch-none">
-        <div className="grid grid-cols-3 grid-rows-3 gap-2 p-2 bg-white/5 rounded-full border border-white/5 backdrop-blur-md shadow-inner">
-          {/* Row 1 */}
-          <div />
+      {/* Mobile Controls (Fixed Bottom) */}
+      {isMobile && (
+        <div className="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 flex flex-col items-center gap-2 pointer-events-auto touch-none">
+          {/* Up Button */}
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            className="h-16 w-16 rounded-2xl bg-black/40 border-primary/40 text-primary hover:bg-primary/20 transition-all active:scale-90 neon-shadow backdrop-blur-md"
             onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('UP'); }}
           >
-            <ArrowUp className="w-8 h-8 text-primary" />
-          </Button>
-          <div />
-          
-          {/* Row 2 */}
-          <Button 
-            variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
-            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('LEFT'); }}
-          >
-            <ArrowLeft className="w-8 h-8 text-primary" />
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-16 w-16 rounded-full bg-white/5 border-white/20 hover:bg-white/10 transition-all active:scale-90"
-            onPointerDown={(e) => { e.preventDefault(); togglePause(); }}
-          >
-             {gameState === 'PAUSED' ? <Play className="w-6 h-6 text-white/40" /> : <Pause className="w-6 h-6 text-white/40" />}
-          </Button>
-          <Button 
-            variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
-            onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('RIGHT'); }}
-          >
-            <ArrowRight className="w-8 h-8 text-primary" />
+            <ArrowUp className="w-8 h-8" />
           </Button>
           
-          {/* Row 3 */}
-          <div />
+          {/* Middle Row */}
+          <div className="flex gap-12">
+            <Button 
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-black/40 border-primary/40 text-primary hover:bg-primary/20 transition-all active:scale-90 neon-shadow backdrop-blur-md"
+              onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('LEFT'); }}
+            >
+              <ArrowLeft className="w-8 h-8" />
+            </Button>
+            <Button 
+              variant="outline" 
+              className="h-16 w-16 rounded-2xl bg-black/40 border-primary/40 text-primary hover:bg-primary/20 transition-all active:scale-90 neon-shadow backdrop-blur-md"
+              onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('RIGHT'); }}
+            >
+              <ArrowRight className="w-8 h-8" />
+            </Button>
+          </div>
+          
+          {/* Down Button */}
           <Button 
             variant="outline" 
-            className="h-16 w-16 rounded-2xl bg-white/5 border-white/10 hover:bg-primary/20 hover:border-primary/50 transition-all active:scale-90 shadow-lg"
+            className="h-16 w-16 rounded-2xl bg-black/40 border-primary/40 text-primary hover:bg-primary/20 transition-all active:scale-90 neon-shadow backdrop-blur-md"
             onPointerDown={(e) => { e.preventDefault(); engineRef.current.setDirection('DOWN'); }}
           >
-            <ArrowDown className="w-8 h-8 text-primary" />
+            <ArrowDown className="w-8 h-8" />
           </Button>
-          <div />
         </div>
-      </div>
+      )}
 
       {/* Desktop Hint */}
-      <div className="hidden md:block mt-8 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
-        WASD to Move &bull; P to Pause
-      </div>
+      {!isMobile && (
+        <div className="mt-8 text-[10px] font-bold text-white/20 uppercase tracking-[0.4em]">
+          WASD or Arrows to Move &bull; P to Pause
+        </div>
+      )}
 
       <footer className="mt-auto pt-8 pb-4 flex flex-col items-center gap-2 text-[9px] text-muted-foreground uppercase tracking-[0.5em] font-bold opacity-30">
         <span>&copy; 2024 NEON SERPENT</span>
