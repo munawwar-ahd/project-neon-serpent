@@ -14,7 +14,6 @@ export default function SnakeGame() {
   const [gameState, setGameState] = useState<GameState>('START');
   const [score, setScore] = useState(0);
   const [highScore, setHighScore] = useState(0);
-  const [foodPulse, setFoodPulse] = useState(1);
   const frameRef = useRef<number>(0);
   const lastUpdateRef = useRef<number>(0);
   const speedRef = useRef<number>(INITIAL_SPEED);
@@ -248,8 +247,9 @@ export default function SnakeGame() {
         </Button>
       </div>
 
-      <footer className="mt-12 text-[10px] text-muted-foreground uppercase tracking-[0.4em] opacity-40">
-        &copy; 2024 NEON SERPENT ARCADE
+      <footer className="mt-12 flex flex-col items-center gap-2 text-[10px] text-muted-foreground uppercase tracking-[0.4em] opacity-40">
+        <span>&copy; 2024 NEON SERPENT ARCADE</span>
+        <span className="opacity-80">MADE BY <span className="neon-text-red font-bold">MUNAWWAR</span></span>
       </footer>
     </div>
   );
