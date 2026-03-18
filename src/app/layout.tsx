@@ -4,8 +4,11 @@ import { Toaster } from "@/components/ui/toaster";
 
 export const metadata = {
   title: "Neon Serpent",
+  description: "Arcade Snake Game",
   icons: {
     icon: "/icon.png",
+    shortcut: "/icon.png",
+    apple: "/icon.png",
   },
 };
 
