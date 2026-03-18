@@ -2,9 +2,11 @@ import type {Metadata} from 'next';
 import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 
-export const metadata: Metadata = {
-  title: 'Neon Serpent | Arcade Snake Game',
-  description: 'A visually polished, neon-infused classic snake game.',
+export const metadata = {
+  title: "Neon Serpent",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
