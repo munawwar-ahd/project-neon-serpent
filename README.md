@@ -5,7 +5,7 @@
 - Play directly in your browser and try to beat your best score.
 
 👉 Live Demo
-https://project-neon-serpent.vercel.app/
+https://playneonserpent.vercel.app/
 
 
 
